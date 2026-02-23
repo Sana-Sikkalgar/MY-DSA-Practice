@@ -1,0 +1,81 @@
+#include <iostream>
+
+using namespace std;
+
+// Using 8 for the standard chessboard size
+#define BOARD_SIZE 8
+
+// Function to display the board in a readable way
+void displayBoard(int board[BOARD_SIZE][BOARD_SIZE]) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        cout << " ";
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            if (board[i][j] == 1)
+                cout << "Q "; // Q for Queen
+            else
+                cout << ". "; // Dot for empty square
+        }
+        cout << endl;
+    }
+}
+
+// Function to check if a queen can be placed at board[row][col]
+// We only need to check the left side because we place queens column by column
+bool isSafe(int board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
+    int i, j;
+    for (i = 0; i < col; i++) {
+        if (board[row][i] == 1)
+            return false;
+    }
+    // 2. Check the upper diagonal on the left
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 1)
+            return false;
+    }
+
+   // 3. Check the lower diagonal on the left
+    for (i = row, j = col; j >= 0 && i < BOARD_SIZE; i++, j--) {
+        if (board[i][j] == 1)
+            return false;
+    }
+
+  // If no queens are attacking, it's safe!
+    return true;
+}
+
+// Recursive function using backtracking to solve the problem
+bool solveNQueens(int board[BOARD_SIZE][BOARD_SIZE], int col) {
+    // Base Case: If all 8 queens are placed, we are done
+    if (col >= BOARD_SIZE) {
+        return true;
+    }
+
+  // Try placing a queen in every row of the current column
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        if (isSafe(board, i, col)) {
+            // Place queen
+            board[i][col] = 1;
+  // Move to the next column
+            if (solveNQueens(board, col + 1)) {
+                return true;
+            }
+ // BACKTRACK: If placing queen here doesn't work, remove her
+            board[i][col] = 0;
+        }
+    }
+    // If queen cannot be placed in any row of this column
+    return false;
+}
+
+int main() {
+    // Initialize the 8x8 board with zeros
+    int board[BOARD_SIZE][BOARD_SIZE] = {0};
+    cout << "--- 8-Queens Problem Solver ---" << endl;
+    if (solveNQueens(board, 0)) {
+        cout << "Successfully placed 8 queens:" << endl << endl;
+        displayBoard(board);
+    } else {
+        cout << "No solution found." << endl;
+    }
+    return 0;
+}
