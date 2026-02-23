@@ -1,0 +1,76 @@
+#include <iostream>
+
+using namespace std;
+
+// Size of the maze grid
+#define N 4
+
+// Function to check if the rat can move to this spot
+bool isSafe(int maze[N][N], int r, int c) {
+    // Check if within bounds and if the path is open (1)
+    if (r >= 0 && r < N && c >= 0 && c < N && maze[r][c] == 1) {
+        return true;
+    }
+    return false;
+}
+
+// Function to print the path matrix
+void printPath(int path[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            cout << path[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+// Backtracking function to find the way out
+bool solve(int maze[N][N], int r, int c, int path[N][N]) {
+    // If we reached the bottom right corner
+    if (r == N - 1 && c == N - 1) {
+        path[r][c] = 1;
+        return true;
+    }
+
+    if (isSafe(maze, r, c)) {
+        // Mark this spot in our path
+        path[r][c] = 1;
+
+        // Try moving Right
+        if (solve(maze, r, c + 1, path)) {
+            return true;
+        }
+
+        // Try moving Down
+        if (solve(maze, r + 1, c, path)) {
+            return true;
+        }
+
+        // If neither works, backtrack: unmark this spot
+        path[r][c] = 0;
+        return false;
+    }
+
+    return false;
+}
+
+int main() {
+    // 1 is path, 0 is wall
+    int maze[N][N] = {
+        {1, 0, 0, 0},
+        {1, 1, 0, 0},
+        {0, 1, 0, 0},
+        {0, 1, 1, 1}
+    };
+
+    int path[N][N] = {0}; // Initialize path with all 0s
+
+    if (solve(maze, 0, 0, path)) {
+        cout << "Path found:" << endl;
+        printPath(path);
+    } else {
+        cout << "No path found!" << endl;
+    }
+
+    return 0;
+}
