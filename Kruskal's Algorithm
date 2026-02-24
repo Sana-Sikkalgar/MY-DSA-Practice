@@ -1,0 +1,63 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+// Maximum number of vertices and edges
+#define MAX_V 10
+#define MAX_E 20
+// Basic structure for an edge
+struct Edge {
+    int u, v, w;
+};
+// Global parent array for Disjoint Set
+int parent[MAX_V];
+// Simple find function to check which set an element belongs to
+int find(int i) {
+    while (parent[i] != i) {
+        i = parent[i];
+    }
+    return i;
+}
+// Simple union function to combine two sets
+void unite(int i, int j) {
+    int root_a = find(i);
+    int root_b = find(j);
+    parent[root_a] = root_b;
+}
+// Comparator to sort edges by weight
+bool compare(Edge a, Edge b) {
+    return a.w < b.w;
+}
+void kruskal(int n, int m, Edge edges[]) {
+ // 1. Sort the edges
+    sort(edges, edges + m, compare);
+ // 2. Initialize parent array (each node is its own parent)
+    for (int i = 0; i < n; i++) {
+        parent[i] = i;
+    }
+    int mst_weight = 0;
+    int edges_count = 0;
+    cout << "Edges in the Minimum Spanning Tree:" << endl;
+    for (int i = 0; i < m; i++) {
+        // 3. If adding this edge doesn't cause a cycle
+        if (find(edges[i].u) != find(edges[i].v)) {
+            unite(edges[i].u, edges[i].v);
+            cout << edges[i].u << " - " << edges[i].v << " : " << edges[i].w << endl;
+            mst_weight += edges[i].w;
+            edges_count++;
+        }
+    }
+    cout << "Total weight of MST: " << mst_weight << endl;
+}
+int main() {
+    int n = 4; // Number of vertices
+    int m = 5; // Number of edges
+    Edge edges[MAX_E] = {
+        {0, 1, 10},
+        {0, 2, 6},
+        {0, 3, 5},
+        {1, 3, 15},
+        {2, 3, 4}
+    };
+    kruskal(n, m, edges);
+    return 0;
+}
